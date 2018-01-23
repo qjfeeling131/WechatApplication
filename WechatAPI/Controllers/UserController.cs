@@ -5,12 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WechatAPI.Controllers
 {
+    [Route("api/[controller]")]
     public class UserController : BaseController
     {
         // GET: /<controller>/
-        public IActionResult Index()
+        [HttpGet()]
+        public IActionResult GetAllUsers()
         {
             return View();
         }
+
+
     }
 }

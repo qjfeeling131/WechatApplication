@@ -21,7 +21,7 @@ namespace Abp.DoNetCore
     {
         private const string SecretKey = "needtogetthisfromenvironment";
         private readonly static SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-        public static IServiceProvider AddAbp<TSartModule>(this IServiceCollection services, IConfigurationRoot configuration) where TSartModule : AbpModule
+        public static IServiceProvider AddAbp<TSartModule>(this IServiceCollection services, IConfiguration configuration) where TSartModule : AbpModule
         {
             //TODO:Set jwt options
             var jwtAppSettingOptions = configuration.GetSection(nameof(JwtIssuerOptions));

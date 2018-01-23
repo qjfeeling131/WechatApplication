@@ -19,4 +19,10 @@
     <ProjectReference Include="..\Abp\Abp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Dtos\Order\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Domain\Customer.cs" />
+  </ItemGroup>
 </Project>

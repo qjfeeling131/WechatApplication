@@ -3,18 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.DoNetCore;
+using Abp.DoNetCore.Application;
+using Abp.DoNetCore.Application.Dtos;
+using Abp.DoNetCore.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WechatAPI.Controllers
 {
+    [Route("api/[controller]")]
     public class AuthorizeController : BaseController
     {
+        private readonly IAbpAuthorizationService _authorizeService;
+
+
+        public AuthorizeController(IAbpAuthorizationService authorizeService){
+            _authorizeService = authorizeService;
+        }
         // GET: /<controller>/
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Authorize(ApplicationUser userInfo)
         {
-            return View();
+           var result= _authorizeService.AuthorizationUser(userInfo);
+            return Ok(result);
         }
     }
 }

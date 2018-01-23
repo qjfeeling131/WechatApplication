@@ -29,7 +29,7 @@ namespace Abp.DoNetCore.Application
         private readonly IRepository<Permission> _permissionRepository;
         private readonly IRepository<Department> _departmentReposiotry;
         private readonly IRepository<UserDepartment> _userDepartmentReposiotry;
-        private readonly ICache _redisCache;
+        //private readonly ICache _redisCache;
         private readonly IExtendedXmlSerializer _serializer;
         public UserAppService(IRepository<User> userRepository, IRepository<UserInfo> userInfoRepository, IRepository<Role> roleRepository, IRepository<UserRole> userRoleRepository, IRepository<RolePermission> rolePermissionRepository, IRepository<Permission> permissionRepository, IRepository<Department> departmentReposiotry, IRepository<UserDepartment> userDepartmentReposiotry, ICache cache, IExtendedXmlSerializer serializer)
         {
@@ -41,7 +41,7 @@ namespace Abp.DoNetCore.Application
             _permissionRepository = permissionRepository;
             _departmentReposiotry = departmentReposiotry;
             _userDepartmentReposiotry = userDepartmentReposiotry;
-            _redisCache = cache;
+            //_redisCache = cache;
             _serializer = serializer;
         }
 
