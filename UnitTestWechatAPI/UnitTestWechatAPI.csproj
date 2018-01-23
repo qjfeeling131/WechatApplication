@@ -14,7 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Abp\Abp.csproj" />
-    <ProjectReference Include="..\Abp.DoNetCore\Abp.DoNetCore.csproj" />
     <ProjectReference Include="..\Abp.AutoMapper\Abp.AutoMapper.csproj" />
+    <ProjectReference Include="..\Abp.DoNetCore\Abp.DoNetCore.csproj" />
+    <ProjectReference Include="..\Abp.EntityFrameworkCore\Abp.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\Abp.RedisCache\Abp.RedisCache.csproj" />
   </ItemGroup>
 </Project>
