@@ -23,7 +23,7 @@ namespace WechatAPI.Controllers
         }
         // GET: /<controller>/
         [HttpGet]
-        public IActionResult Authorize(ApplicationUser userInfo)
+        public IActionResult Authorize([FromBody]ApplicationUser userInfo)
         {
            var result= _authorizeService.AuthorizationUser(userInfo);
             return Ok(result);
