@@ -6,6 +6,6 @@ namespace Abp.DoNetCore.Common
 {
     public class MimeoOAPolicyType
     {
-        public const string PolicyName = "MimeoOfficeAutoSystemPermits";
+        public const string PolicyName = "WechatAPISystemPermits";
     }
 }

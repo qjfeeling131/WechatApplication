@@ -71,7 +71,7 @@ namespace Abp.DoNetCore
             var abpBootstrapper = AddAbpBootstrapper<TSartModule>(services, IocManager.Instance);
             abpBootstrapper.IocManager.Builder.Populate(services);
             abpBootstrapper.IocManager.BuildComponent();
-
+           
             return new AutofacServiceProvider(abpBootstrapper.IocManager.IocContainer);
         }
         private static AbpBootstrapper AddAbpBootstrapper<TStartModule>(IServiceCollection services, IIocManager iocManager) where TStartModule : AbpModule

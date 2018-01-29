@@ -38,11 +38,11 @@ namespace Abp.DoNetCore.Application
                 return result;
             }
 
-            result.Data = await ProductedMimeoOAToken(userInfo.AccountName);
+            result.Data = await GeneralToken(userInfo.AccountName);
             return result;
         }
 
-        private async Task<string> ProductedMimeoOAToken(string userName)
+        private async Task<string> GeneralToken(string userName)
         {
             var identity = await GetClaimsIdentity(userName);
             var claims = new[]
@@ -51,7 +51,7 @@ namespace Abp.DoNetCore.Application
         new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
         new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(),
         ClaimValueTypes.Integer64),
-        identity.FindFirst("MimeoUser") };
+        identity.FindFirst("WechatUser") };
             // Create the JWT security token and encode it.
             var jwt = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,
@@ -64,16 +64,7 @@ namespace Abp.DoNetCore.Application
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             return encodedJwt;
-            // Serialize and return the response
-            //var response = new
-            //{
-            //    access_token = encodedJwt,
-            //    expires_in = (int)_jwtOptions.ValidFor.TotalSeconds
-            //};
 
-            //var json = JsonSerializationHelper.Seialize(response);
-
-            //return json;
         }
 
         private long ToUnixEpochDate(DateTime date) => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
@@ -82,7 +73,7 @@ namespace Abp.DoNetCore.Application
             if (!string.IsNullOrEmpty(userName))
             {
                 return new ClaimsIdentity(new GenericIdentity(userName, "Token"), new[] {
-                    new Claim("MimeoUser",userName)
+                    new Claim("WechatUser",userName)
                 });
             }
             return null;

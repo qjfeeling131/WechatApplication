@@ -29,7 +29,7 @@ namespace WechatAPI
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddOptions();
@@ -46,8 +46,8 @@ namespace WechatAPI
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "1.0 alpha",  //beta
-                    Title = "MimeoCore API",
-                    Description = "A simple example Dotnet Core Web API",
+                    Title = "Wechat API",
+                    Description = "It's a back-end API for Wechat",
                     TermsOfService = "None",
                 });
                 //MimeoOAWeb
@@ -74,7 +74,7 @@ namespace WechatAPI
                 options.DbConnections.Add(Abp.DBSelector.Slave, redisCacheConfiguration.SlaveConnection);
                 options.DatabaseId = redisCacheConfiguration.DataBaseId;
             });
-            services.AddAbp<WechatModule>(Configuration);
+           return services.AddAbp<WechatModule>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,9 +87,9 @@ namespace WechatAPI
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mimeo Core Api V1");
-            }); 
-
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wechat Api V1");
+            });
+            app.UserAbp();
             app.UseMvc();
         }
     }

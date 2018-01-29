@@ -11,9 +11,9 @@ namespace Abp.DoNetCore
     public static class AbpApplicationBuilderExtensions
     {
        
-        public static void UserAbp(this IApplicationBuilder app, IConfigurationRoot configuration)
+        public static void UserAbp(this IApplicationBuilder app)
         {
-            app.UseAuthentication();      
+            app.UseAuthentication();
         }
         private static void InitializeAbp(IApplicationBuilder app)
         {

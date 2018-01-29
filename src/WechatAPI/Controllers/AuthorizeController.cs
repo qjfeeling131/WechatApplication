@@ -7,8 +7,7 @@ using Abp.DoNetCore.Application;
 using Abp.DoNetCore.Application.Dtos;
 using Abp.DoNetCore.Domain;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Authorization;
 
 namespace WechatAPI.Controllers
 {
@@ -18,14 +17,17 @@ namespace WechatAPI.Controllers
         private readonly IAbpAuthorizationService _authorizeService;
 
 
-        public AuthorizeController(IAbpAuthorizationService authorizeService){
+        public AuthorizeController(IAbpAuthorizationService authorizeService)
+        {
             _authorizeService = authorizeService;
         }
-        // GET: /<controller>/
-        [HttpGet]
-        public IActionResult Authorize([FromBody]ApplicationUser userInfo)
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Authorize([FromBody]ApplicationUser userInfo)
         {
-           var result= _authorizeService.AuthorizationUser(userInfo);
+            var result = await _authorizeService.AuthorizationUser(userInfo);
             return Ok(result);
         }
     }
