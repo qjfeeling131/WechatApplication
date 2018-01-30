@@ -14,10 +14,10 @@ namespace WechatAPI.Controllers
     [Route("api/[controller]")]
     public class AuthorizeController : BaseController
     {
-        private readonly IAbpAuthorizationService _authorizeService;
+        private readonly Abp.DoNetCore.Application.IAuthorizationService _authorizeService;
 
 
-        public AuthorizeController(IAbpAuthorizationService authorizeService)
+        public AuthorizeController(Abp.DoNetCore.Application.IAuthorizationService authorizeService)
         {
             _authorizeService = authorizeService;
         }

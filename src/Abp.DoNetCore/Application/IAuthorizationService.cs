@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Abp.DoNetCore.Application
 {
-    public interface IAbpAuthorizationService
+    public interface IAuthorizationService
     {
         Task<RESTResult> AuthorizationUser(ApplicationUser userInfo);
     }

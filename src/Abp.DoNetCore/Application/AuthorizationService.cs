@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace Abp.DoNetCore.Application
 {
-    public class AbpAuthorizationService : IAbpAuthorizationService
+    public class AuthorizationService : IAuthorizationService
     {
         private readonly IUserAppService _userAppService;
         private readonly JwtIssuerOptions _jwtOptions;
-        public AbpAuthorizationService(IUserAppService userAppService, IOptions<JwtIssuerOptions> jwtOptions)
+        public AuthorizationService(IUserAppService userAppService, IOptions<JwtIssuerOptions> jwtOptions)
         {
             _userAppService = userAppService;
             _jwtOptions = jwtOptions.Value;
