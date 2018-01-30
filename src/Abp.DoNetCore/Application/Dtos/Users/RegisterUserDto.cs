@@ -10,7 +10,7 @@ using System.Text;
 namespace Abp.DoNetCore.Application.Dtos.Users
 {
     [AutoMapper.AutoMap(typeof(User))]
-    public class RegisterUserDataObject
+    public class RegisterUserDto
     {
         [JsonProperty("Email")]
         public string AccountEmail { get; set; }
@@ -22,6 +22,6 @@ namespace Abp.DoNetCore.Application.Dtos.Users
         public string Password { get; set; }
         public List<Guid?> RoleIds { get; set; }
         public Guid? DepartmentId { get; set; }
-        public UserInfoDataTransferObject UserInfo { get; set; }
+        public UserInfoDto UserInfo { get; set; }
     }
 }

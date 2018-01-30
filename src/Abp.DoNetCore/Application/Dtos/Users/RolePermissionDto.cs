@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Abp.DoNetCore.Application.Dtos.Users
 {
-    public class RolePermissionTransferObject
+    public class RolePermissionDto
     {
         [Required]
         public Guid? RoleId { get; set; }

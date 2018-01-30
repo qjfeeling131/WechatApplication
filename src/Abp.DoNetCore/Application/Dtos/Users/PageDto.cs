@@ -6,7 +6,7 @@ using System.Text;
 namespace Abp.DoNetCore.Application.Dtos.Users
 {
     [AutoMapper.AutoMap(typeof(PageMenu))]
-    public class PageDataTransferObject
+    public class PageDto
     {
         public Guid Id { get; set; }
 
@@ -18,14 +18,14 @@ namespace Abp.DoNetCore.Application.Dtos.Users
 
         public string Link { get; set; }
 
-        private List<PageDataTransferObject> _child;
-        public List<PageDataTransferObject> Child
+        private List<PageDto> _child;
+        public List<PageDto> Child
         {
             get
             {
                 if (_child == null)
                 {
-                    _child = new List<PageDataTransferObject>();
+                    _child = new List<PageDto>();
                 }
                 return _child;
             }

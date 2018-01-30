@@ -10,7 +10,7 @@ namespace Abp.DoNetCore
     [ServiceFilter(typeof(ExceptionFilter))]
     public class BaseController : Controller
     {
-        internal protected UserDataTransferObject CurrentUser
+        internal protected UserDto CurrentUser
         {
             get
             {

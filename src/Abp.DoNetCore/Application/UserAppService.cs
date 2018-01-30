@@ -46,7 +46,7 @@ namespace Abp.DoNetCore.Application
         }
 
         #region User
-        public async Task<RESTResult> AddOrUpdateUserAsync(Guid currentUserId, Guid id, bool isAdd, RegisterUserDataObject input)
+        public async Task<RESTResult> AddOrUpdateUserAsync(Guid currentUserId, Guid id, bool isAdd, RegisterUserDto input)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Failed };
             if (!RegUtility.IsValidationForEmail(input.AccountEmail))
@@ -78,7 +78,7 @@ namespace Abp.DoNetCore.Application
                 await _userRepository.InsertAsync(userEntity);
                 if (input.UserInfo != null)
                 {
-                    var userInfoEntity = Mapper.Map<UserInfoDataTransferObject, UserInfo>(input.UserInfo);
+                    var userInfoEntity = Mapper.Map<UserInfoDto, UserInfo>(input.UserInfo);
                     await _userInfoRepository.InsertAsync(userInfoEntity);
                 }
                 await SetUserAndDepartmentMapAsync(currentUserId, userEntity.Id, input.DepartmentId);
@@ -108,7 +108,7 @@ namespace Abp.DoNetCore.Application
                 var userInfoEntity = (await _userInfoRepository.GetAllListAsync(item => item.UserId.Equals(id))).FirstOrDefault();
                 if (userInfoEntity != null)
                 {
-                    var userInfoModel = Mapper.Map<UserInfoDataTransferObject, UserInfo>(input.UserInfo);
+                    var userInfoModel = Mapper.Map<UserInfoDto, UserInfo>(input.UserInfo);
                     userInfoModel.Id = userInfoEntity.Id;
                     userInfoModel.UserId = id;
                     await _userInfoRepository.UpdateAsync(userInfoModel);
@@ -116,7 +116,7 @@ namespace Abp.DoNetCore.Application
                 else
                 {
                     //TODO:Add new Informations
-                    var userinfoModel = Mapper.Map<UserInfoDataTransferObject, UserInfo>(input.UserInfo);
+                    var userinfoModel = Mapper.Map<UserInfoDto, UserInfo>(input.UserInfo);
                     userinfoModel.UserId = userEntity.Id;
                     await _userInfoRepository.InsertAsync(userinfoModel);
                 }
@@ -140,21 +140,21 @@ namespace Abp.DoNetCore.Application
         /// </summary>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        public async Task<UserDataTransferObject> GetUserInformationsAsync(string accountName)
+        public async Task<UserDto> GetUserInformationsAsync(string accountName)
         {
             var userModel = await GetUserByAccountName(accountName);
-            var userDto = Mapper.Map<User, UserDataTransferObject>(userModel);
+            var userDto = Mapper.Map<User, UserDto>(userModel);
             var departmentModel = await GetCurrentUserDepartment(userModel.Id);
-            userDto.Department = departmentModel != null ? Mapper.Map<Department, DepartmentDataTransferObject>(departmentModel) : null;
+            userDto.Department = departmentModel != null ? Mapper.Map<Department, DepartmentDto>(departmentModel) : null;
             var roleModels = departmentModel != null ? await GetRolesWithCurrentUser(userModel.Id, departmentModel.Id) : await GetRolesWithCurrentUser(userModel.Id, Guid.Empty);
             foreach (var item in roleModels)
             {
-                userDto.Roles.Add(Mapper.Map<Role, RoleDataTransferObject>(item));
+                userDto.Roles.Add(Mapper.Map<Role, RoleDto>(item));
             }
             var permissionModels = await GetCurrentUserPermissions(userModel.Id);
             foreach (var item in permissionModels)
             {
-                userDto.Permissions.Add(Mapper.Map<Permission, PermissionTransferDataObject>(item));
+                userDto.Permissions.Add(Mapper.Map<Permission, PermissionDto>(item));
             }
             return userDto;
         }
@@ -178,17 +178,17 @@ namespace Abp.DoNetCore.Application
             return result;
         }
         [UnitOfWork(IsDisabled = true)]
-        public async Task<RESTResult> GetUsers(UserDataTransferObject currentUser, int pageIndex, int pageSize)
+        public async Task<RESTResult> GetUsers(UserDto currentUser, int pageIndex, int pageSize)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Success };
-            List<UserDataTransferObject> userDTOs = new List<UserDataTransferObject>();
+            List<UserDto> userDTOs = new List<UserDto>();
 
             //TODO: Super admin
             if (currentUser.Roles.Where(item => item.Level.Equals(RoleLevelStatus.SupperAdmin)).Count() > 0)
             {
                 var allUserCount = await _userRepository.CountAsync();
                 var allUser = (await _userRepository.GetAllListAsync()).Take(pageIndex * pageSize).Skip(pageSize * (pageIndex - 1));
-                allUser.ToList().ForEach(item => userDTOs.Add(Mapper.Map<User, UserDataTransferObject>(item)));
+                allUser.ToList().ForEach(item => userDTOs.Add(Mapper.Map<User, UserDto>(item)));
                 result.Data = new { users = userDTOs, Count = allUserCount };
                 return result;
             }
@@ -202,7 +202,7 @@ namespace Abp.DoNetCore.Application
             //TODO:Mapping, DOT NOT USE THE .ToList()
             foreach (var item in userModels)
             {
-                userDTOs.Add(Mapper.Map<User, UserDataTransferObject>(item));
+                userDTOs.Add(Mapper.Map<User, UserDto>(item));
             }
             var userCount = await _userRepository.CountAsync(item => item.IsDeleted.Equals(false));
             result.Data = new { users = userDTOs, Count = userCount };
@@ -222,36 +222,36 @@ namespace Abp.DoNetCore.Application
             {
                 throw new ArgumentException($"the current user{userModel.AccountCode} have been removed");
             }
-            var userDataObject = Mapper.Map<User, UserDataTransferObject>(userModel);
+            var userDataObject = Mapper.Map<User, UserDto>(userModel);
             var departmentModel = await GetCurrentUserDepartment(userModel.Id);
             var userInfoModel = (await _userInfoRepository.GetAllListAsync(item => item.UserId.Equals(userId))).FirstOrDefault();
             if (userInfoModel != null)
             {
-                userDataObject.UserInfo = Mapper.Map<UserInfo, UserInfoDataTransferObject>(userInfoModel);
+                userDataObject.UserInfo = Mapper.Map<UserInfo, UserInfoDto>(userInfoModel);
             }
-            userDataObject.Department = departmentModel != null ? Mapper.Map<Department, DepartmentDataTransferObject>(departmentModel) : null;
+            userDataObject.Department = departmentModel != null ? Mapper.Map<Department, DepartmentDto>(departmentModel) : null;
             var roleModels = departmentModel != null ? await GetRolesWithCurrentUser(userModel.Id, departmentModel.Id) : await GetRolesWithCurrentUser(userModel.Id, Guid.Empty);
             foreach (var item in roleModels)
             {
-                userDataObject.Roles.Add(Mapper.Map<Role, RoleDataTransferObject>(item));
+                userDataObject.Roles.Add(Mapper.Map<Role, RoleDto>(item));
             }
             var permissionModels = await GetCurrentUserPermissions(userModel.Id);
             foreach (var item in permissionModels)
             {
-                userDataObject.Permissions.Add(Mapper.Map<Permission, PermissionTransferDataObject>(item));
+                userDataObject.Permissions.Add(Mapper.Map<Permission, PermissionDto>(item));
             }
             result.Data = userDataObject;
             return result;
         }
 
-        public async Task<RESTResult> AddOrUpdateUserInfo(UserInfoDataTransferObject userInfo, Guid userId)
+        public async Task<RESTResult> AddOrUpdateUserInfo(UserInfoDto userInfo, Guid userId)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Failed };
             var userInfos = await _userInfoRepository.GetAllListAsync(item => item.UserId.Equals(userId));
             if (userInfos.Count <= 0)
             {
                 //TODO:Add user info
-                var userInfoModle = Mapper.Map<UserInfoDataTransferObject, UserInfo>(userInfo);
+                var userInfoModle = Mapper.Map<UserInfoDto, UserInfo>(userInfo);
                 userInfoModle.UserId = userId;
                 await _userInfoRepository.InsertAsync(userInfoModle);
                 result.Code = RESTStatus.Success;
@@ -301,7 +301,7 @@ namespace Abp.DoNetCore.Application
         #region Department
 
         [UnitOfWork(IsDisabled = true)]
-        public async Task<RESTResult> GetDepartmentsAsync(UserDataTransferObject currentUser, int pageIndex, int pageSize)
+        public async Task<RESTResult> GetDepartmentsAsync(UserDto currentUser, int pageIndex, int pageSize)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Success };
             if (currentUser.Roles.Where(item => item.Level.Equals(RoleLevelStatus.SupperAdmin)).Count() > 0)
@@ -310,7 +310,7 @@ namespace Abp.DoNetCore.Application
                 var pagingDepartmentList = departmentList.Skip(pageSize * (pageIndex - 1)).Take(pageSize);
                 result.Data = pagingDepartmentList.Select(item =>
                 {
-                    var departmentDTO = Mapper.Map<Department, DepartmentDataTransferObject>(item);
+                    var departmentDTO = Mapper.Map<Department, DepartmentDto>(item);
                     return departmentDTO;
                 });
             }
@@ -330,13 +330,13 @@ namespace Abp.DoNetCore.Application
             return result;
         }
 
-        public async Task<RESTResult> AddOrUpdateDepartmentAsync(DepartmentDataTransferObject departmentInfo, Guid userId, bool IsDeleted)
+        public async Task<RESTResult> AddOrUpdateDepartmentAsync(DepartmentDto departmentInfo, Guid userId, bool IsDeleted)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Failed };
             if (Guid.Empty.Equals(departmentInfo.Id) || departmentInfo.Id == null)
             {
                 //TODO:Add a new department
-                var deparmentEntity = Mapper.Map<DepartmentDataTransferObject, Department>(departmentInfo);
+                var deparmentEntity = Mapper.Map<DepartmentDto, Department>(departmentInfo);
                 deparmentEntity.CreateTime = DateTime.Now;
                 deparmentEntity.CreateByUserId = userId;
                 await _departmentReposiotry.InsertAsync(deparmentEntity);
@@ -445,7 +445,7 @@ namespace Abp.DoNetCore.Application
 
         #region Role
 
-        public async Task<RESTResult> UpdateRoleAsync(Guid currentUserId, bool isDeleted, RoleDataTransferObject roleInfo)
+        public async Task<RESTResult> UpdateRoleAsync(Guid currentUserId, bool isDeleted, RoleDto roleInfo)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Failed };
             var roleEntities = await _roleRepository.GetAllListAsync(item => item.Id == roleInfo.Id.Value && item.IsDeleted.Equals(false));
@@ -463,15 +463,15 @@ namespace Abp.DoNetCore.Application
                 roleEntity.Level = RoleLevelStatus.Other;
                 var userModel = await _roleRepository.UpdateAsync(roleEntity);
                 result.Code = RESTStatus.Success;
-                result.Data = Mapper.Map<Role, RoleDataTransferObject>(userModel);
+                result.Data = Mapper.Map<Role, RoleDto>(userModel);
                 return result;
             }
             return result;
         }
 
-        public async Task<bool> AddNewRoleAsync(Guid userId, RoleDataTransferObject roleInfo)
+        public async Task<bool> AddNewRoleAsync(Guid userId, RoleDto roleInfo)
         {
-            var roleNewEntity = Mapper.Map<RoleDataTransferObject, Role>(roleInfo);
+            var roleNewEntity = Mapper.Map<RoleDto, Role>(roleInfo);
             roleNewEntity.CreateByUserId = userId;
             roleNewEntity.CreateTime = DateTime.Now;
             roleNewEntity.Code = userId.ToString();
@@ -486,20 +486,20 @@ namespace Abp.DoNetCore.Application
             return false;
         }
 
-        public async Task<RESTResult> GetRoles(UserDataTransferObject currentUser, int pageIndex, int pageSize)
+        public async Task<RESTResult> GetRoles(UserDto currentUser, int pageIndex, int pageSize)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Success };
-            List<RoleDataTransferObject> rolesDataobjects = new List<RoleDataTransferObject>();
+            List<RoleDto> rolesDataobjects = new List<RoleDto>();
             if (currentUser.Roles.Where(item => item.Level.Equals(RoleLevelStatus.SupperAdmin)).Count() > 0)
             {
                 var roles = _roleRepository.GetAllList(item => item.IsDeleted.Equals(false) && !item.Level.Equals(RoleLevelStatus.SupperAdmin)).Skip(pageSize * (pageIndex - 1)).Take(pageSize);
                 foreach (var role in roles)
                 {
                     //TODO:Get role permissions
-                    var roleDataObject = Mapper.Map<Role, RoleDataTransferObject>(role);
+                    var roleDataObject = Mapper.Map<Role, RoleDto>(role);
                     var rolePermissions = await _rolePermissionRepository.GetAllListAsync(item => role.Id.Equals(item.RoleId));
                     var permissions = await _permissionRepository.GetAllListAsync(item => rolePermissions.Select(c => c.PermissionId).Contains(item.Id));
-                    permissions.ForEach(item => roleDataObject.Permissions.Add(Mapper.Map<Permission, PermissionTransferDataObject>(item)));
+                    permissions.ForEach(item => roleDataObject.Permissions.Add(Mapper.Map<Permission, PermissionDto>(item)));
                     rolesDataobjects.Add(roleDataObject);
                 }
                 result.Data = rolesDataobjects;
@@ -511,10 +511,10 @@ namespace Abp.DoNetCore.Application
                 foreach (var role in roles)
                 {
                     //TODO:Get role permissions
-                    var roleDataObject = Mapper.Map<Role, RoleDataTransferObject>(role);
+                    var roleDataObject = Mapper.Map<Role, RoleDto>(role);
                     var rolePermissions = await _rolePermissionRepository.GetAllListAsync(item => role.Id.Equals(item.RoleId));
                     var permissions = await _permissionRepository.GetAllListAsync(item => rolePermissions.Select(c => c.PermissionId).Contains(item.Id));
-                    permissions.ForEach(item => roleDataObject.Permissions.Add(Mapper.Map<Permission, PermissionTransferDataObject>(item)));
+                    permissions.ForEach(item => roleDataObject.Permissions.Add(Mapper.Map<Permission, PermissionDto>(item)));
                     rolesDataobjects.Add(roleDataObject);
                 }
                 result.Data = rolesDataobjects;
@@ -536,13 +536,13 @@ namespace Abp.DoNetCore.Application
         #endregion
 
         #region Permission
-        public async Task<RESTResult> AddOrUpdatePermissionAsync(PermissionTransferDataObject permissionInfo, Guid currentUserId, bool IsDeleted)
+        public async Task<RESTResult> AddOrUpdatePermissionAsync(PermissionDto permissionInfo, Guid currentUserId, bool IsDeleted)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Success };
             if (Guid.Empty.Equals(permissionInfo.Id) || permissionInfo.Id == null)
             {
                 //TODO:Add a new department
-                var permissionEntity = Mapper.Map<PermissionTransferDataObject, Permission>(permissionInfo);
+                var permissionEntity = Mapper.Map<PermissionDto, Permission>(permissionInfo);
                 if (permissionInfo.PermissionData != null)
                 {
                     permissionInfo.PermissionData.Id = Guid.NewGuid();
@@ -579,10 +579,10 @@ namespace Abp.DoNetCore.Application
         {
             RESTResult result = new RESTResult { Code = RESTStatus.Success };
             var permissionLists = _permissionRepository.GetAllList(item => item.IsDeleted.Equals(false)).Skip(pageSize * (pageIndex - 1)).Take(pageSize);
-            List<PermissionTransferDataObject> permissionDOTList = new List<PermissionTransferDataObject>();
+            List<PermissionDto> permissionDOTList = new List<PermissionDto>();
             foreach (var item in permissionLists)
             {
-                var permissionDTO = Mapper.Map<Permission, PermissionTransferDataObject>(item);
+                var permissionDTO = Mapper.Map<Permission, PermissionDto>(item);
                 permissionDTO.PermissionData = string.IsNullOrEmpty(item.DataXml) ? null : _serializer.Deserialize<PageMenu>(item.DataXml);
                 permissionDOTList.Add(permissionDTO);
             }
@@ -590,7 +590,7 @@ namespace Abp.DoNetCore.Application
             return Task.FromResult(result);
         }
 
-        public async Task<RESTResult> SetPermissionToRoleAsync(Guid currentUserId, RolePermissionTransferObject rolePermissionInfo)
+        public async Task<RESTResult> SetPermissionToRoleAsync(Guid currentUserId, RolePermissionDto rolePermissionInfo)
         {
             RESTResult result = new RESTResult { Code = RESTStatus.NotData };
 
@@ -641,7 +641,7 @@ namespace Abp.DoNetCore.Application
                     pages.Add(_serializer.Deserialize<PageMenu>(item.DataXml));
                 }
             }
-            List<PageDataTransferObject> pageDTOs = new List<PageDataTransferObject>();
+            List<PageDto> pageDTOs = new List<PageDto>();
             RecursivePage(pages.OrderBy(c => c.ParentId).ToList(), pageDTOs, true);
             result.Data = pageDTOs;
             return result;
@@ -653,7 +653,7 @@ namespace Abp.DoNetCore.Application
         /// <param name="pagemenus"></param>
         /// <param name="childs"></param>
         /// <param name="isRoot"></param>
-        private void RecursivePage(List<PageMenu> pagemenus, List<PageDataTransferObject> childs, bool isRoot)
+        private void RecursivePage(List<PageMenu> pagemenus, List<PageDto> childs, bool isRoot)
         {
             if (isRoot)
             {
@@ -669,7 +669,7 @@ namespace Abp.DoNetCore.Application
                             {
                                 continue;
                             }
-                            childs.Add(Mapper.Map<PageMenu, PageDataTransferObject>(item));
+                            childs.Add(Mapper.Map<PageMenu, PageDto>(item));
                         }
                     }
                     RecursivePage(pagemenus, childs, false);
@@ -685,7 +685,7 @@ namespace Abp.DoNetCore.Application
                         //TODO:add the child item;
                         foreach (var childItem in childItems)
                         {
-                            item.Child.Add(Mapper.Map<PageMenu, PageDataTransferObject>(childItem));
+                            item.Child.Add(Mapper.Map<PageMenu, PageDto>(childItem));
                             RecursivePage(pagemenus, item.Child, false);
                         }
                     }

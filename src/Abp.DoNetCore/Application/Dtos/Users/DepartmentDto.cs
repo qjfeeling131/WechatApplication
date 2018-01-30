@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Abp.DoNetCore.Application.Dtos.Users
 {
     [AutoMap(typeof(Department))]
-    public class DepartmentDataTransferObject
+    public class DepartmentDto
     {
         public Guid? Id { get; set; }
 

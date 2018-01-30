@@ -38,10 +38,10 @@ namespace Abp.DoNetCore.Handlers
     {
         public override string Name => "Admin";
         public override string AuthenticationType => "MimeoOAApplication";
-        public UserDataTransferObject CurrentUser { get; }
+        public UserDto CurrentUser { get; }
 
 
-        public MimeoOAIdentity(UserDataTransferObject currentUser)
+        public MimeoOAIdentity(UserDto currentUser)
         {
             this.CurrentUser = currentUser;
         }

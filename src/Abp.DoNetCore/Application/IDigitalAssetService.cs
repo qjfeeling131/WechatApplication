@@ -8,7 +8,7 @@ namespace Abp.DoNetCore.Application
 {
     public interface IDigitalAssetService
     {
-        Task<RESTResult> GetDigitalAssets(UserDataTransferObject currentUser, int index, int size);
+        Task<RESTResult> GetDigitalAssets(UserDto currentUser, int index, int size);
         Task<RESTResult> UpdateDigitalAssets(Guid currentUserId, DigitalAssetItemDataObject digitalAssetItem);
     }
 }

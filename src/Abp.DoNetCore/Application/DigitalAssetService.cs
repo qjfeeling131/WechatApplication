@@ -25,7 +25,7 @@ namespace Abp.DoNetCore.Application
         }
 
         [UnitOfWork(IsDisabled =true)]
-        public async Task<RESTResult> GetDigitalAssets(UserDataTransferObject currentUser, int pageIndex, int pageSize)
+        public async Task<RESTResult> GetDigitalAssets(UserDto currentUser, int pageIndex, int pageSize)
         {
             RESTResult result = new RESTResult();
             IEnumerable<DigitalAssetItem> digitalAssetItems=null;

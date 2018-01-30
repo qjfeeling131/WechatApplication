@@ -10,7 +10,7 @@ namespace Abp.DoNetCore.Application.Dtos.Users
 {
     [AutoMap(typeof(Permission))]
     [DisplayName("permission")]
-    public class PermissionTransferDataObject
+    public class PermissionDto
     {
         public Guid? Id { get; set; }
         public string Name { get; set; }

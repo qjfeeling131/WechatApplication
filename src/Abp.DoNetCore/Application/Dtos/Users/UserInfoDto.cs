@@ -11,7 +11,7 @@ namespace Abp.DoNetCore.Application.Dtos.Users
 {
     [AutoMap(typeof(UserInfo))]
     [DisplayName("userInfo")]
-    public class UserInfoDataTransferObject
+    public class UserInfoDto
     {
         //[Required]
         //public string UserId { get; set; }

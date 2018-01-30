@@ -10,7 +10,7 @@ namespace Abp.DoNetCore.Application.Dtos.Users
 {
     [AutoMap(typeof(Role))]
     [DisplayName("role")]
-    public class RoleDataTransferObject
+    public class RoleDto
     {
         public Guid? Id { get; set; }
         public string Code { set; get; }
@@ -21,14 +21,14 @@ namespace Abp.DoNetCore.Application.Dtos.Users
         public DateTime ModifyTime { get; set; }
         [JsonIgnore]
         public RoleLevelStatus Level { get; set; }
-        private List<PermissionTransferDataObject> _Permissions;
-        public List<PermissionTransferDataObject> Permissions
+        private List<PermissionDto> _Permissions;
+        public List<PermissionDto> Permissions
         {
             get
             {
                 if (_Permissions == null)
                 {
-                    _Permissions = new List<PermissionTransferDataObject>();
+                    _Permissions = new List<PermissionDto>();
                 }
                 return _Permissions;
             }
