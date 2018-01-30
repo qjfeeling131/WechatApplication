@@ -1,16 +1,12 @@
-﻿using Abp.Domain.Repositories;
-using Abp.DoNetCore.Application.Dtos;
-using Abp.DoNetCore.Common;
-using Abp.DoNetCore.Domain;
-using Abp.Json;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
+using Abp.DoNetCore.Application.Dtos;
+using Abp.DoNetCore.Common;
+using Microsoft.Extensions.Options;
+using Abp.DoNetCore.Application.Abstracts;
 
 namespace Abp.DoNetCore.Application
 {

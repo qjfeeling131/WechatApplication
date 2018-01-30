@@ -14,8 +14,8 @@ namespace WechatAPI.Core.Module
     {
         public override void Initialize(ContainerBuilder builder)
         {
-            builder.RegisterType<DefaultDbContextResolver<MimeoOAContext>>().As<IDbContextResolver>().InstancePerLifetimeScope();
-            builder.RegisterType<AbpDbContextConfigurerAction<MimeoOAContext>>().As<IAbpDbContextConfigurer<MimeoOAContext>>().WithParameter(new NamedParameter("action", new Action<AbpDbContextConfiguration<MimeoOAContext>>(options=> { options.DbContextOptions.UseMySql(options.ConnectionString); })));
+            builder.RegisterType<DefaultDbContextResolver<WechatContext>>().As<IDbContextResolver>().InstancePerLifetimeScope();
+            builder.RegisterType<AbpDbContextConfigurerAction<WechatContext>>().As<IAbpDbContextConfigurer<WechatContext>>().WithParameter(new NamedParameter("action", new Action<AbpDbContextConfiguration<WechatContext>>(options=> { options.DbContextOptions.UseMySql(options.ConnectionString); })));
         }
     }
 }

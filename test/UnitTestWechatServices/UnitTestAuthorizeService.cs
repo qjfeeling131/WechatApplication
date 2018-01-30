@@ -9,6 +9,7 @@ using Moq;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Abp.DoNetCore.Application.Abstracts;
 
 namespace UnitTestWechatServices
 {

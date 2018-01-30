@@ -1,5 +1,6 @@
 ﻿using Abp.AutoMapper;
 using Abp.DoNetCore.Application;
+using Abp.DoNetCore.Application.Abstracts;
 using Abp.DoNetCore.Domain.XmlObjects;
 using Abp.EntityFrameworkCore;
 using Abp.Modules;

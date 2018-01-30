@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WechatAPI.Core.MimeoDBContext
 {
-    public class MimeoOAContext : AbpDbContext
+    public class WechatContext : AbpDbContext
     {
         public DbSet<User> mo_user { get; set; }
         public DbSet<Role> mo_role { get; set; }
@@ -17,7 +17,7 @@ namespace WechatAPI.Core.MimeoDBContext
         public DbSet<Recieve> mo_recieve { get; set; }
         public DbSet<Order> mo_order { get; set; }
         public DbSet<Receipt> mo_receipt { get; set; }
-        public MimeoOAContext(DbContextOptions<MimeoOAContext> options):base(options)
+        public WechatContext(DbContextOptions<WechatContext> options):base(options)
         {
         }
 

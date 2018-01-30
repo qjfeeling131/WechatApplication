@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Application\Dtos\Order\" />
+    <Folder Include="Application\Abstracts\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Domain\Customer.cs" />

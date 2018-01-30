@@ -1,6 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
-
+using System.Collections.Generic;
 namespace Abp.DoNetCore.Application.Dtos.Order
 {
     public class OrderDto
@@ -13,6 +13,7 @@ namespace Abp.DoNetCore.Application.Dtos.Order
         public decimal FixedPrice { get; set; }
         public decimal Total { get; set; }
         public decimal DeliveryTotal { get; set; }
+        public List<LineItemDto> Items { get; set; }
         [JsonIgnore]
         public Guid ApplicationSubId { get; set; }
         public string Remark { get; set; }

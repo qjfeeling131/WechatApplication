@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abp.DoNetCore.Application
+namespace Abp.DoNetCore.Application.Abstracts
 {
     public interface IAuthorizationService
     {

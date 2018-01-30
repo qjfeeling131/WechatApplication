@@ -1,10 +1,9 @@
-﻿using Abp.DoNetCore.Application.Dtos;
-using Abp.DoNetCore.Application.Dtos.Users;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
+using Abp.DoNetCore.Application.Dtos;
+using Abp.DoNetCore.Application.Dtos.Users;
 
-namespace Abp.DoNetCore.Application
+namespace Abp.DoNetCore.Application.Abstracts
 {
     public interface IUserAppService
     {

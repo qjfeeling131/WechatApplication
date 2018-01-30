@@ -1,11 +1,8 @@
-﻿using Abp.DoNetCore.Application;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using Abp.DoNetCore.Application.Abstracts;
 using Abp.DoNetCore.Application.Dtos.Users;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace Abp.DoNetCore.Handlers
 {
