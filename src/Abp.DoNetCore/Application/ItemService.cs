@@ -9,37 +9,104 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using AutoMapper;
+using System.IO;
+using Microsoft.Extensions.Options;
+using Abp.DoNetCore.Common;
 
 namespace Abp.DoNetCore.Application
 {
-    public class ItemService:IItemService
+    public class ItemService : IItemService
     {
         public IRepository<Item> _itemRepository;
-        public ItemService(IRepository<Item> itemRepository)
+        public IRepository<Picture> _pictureRepository;
+        public IOptions<BaseOptions> _baseOptions;
+        public ItemService(IRepository<Item> itemRepository, IRepository<Picture> pictureRepository, IOptions<BaseOptions> baseOptions)
         {
             _itemRepository = itemRepository;
+            _pictureRepository = pictureRepository;
+            _baseOptions = baseOptions;
         }
 
         public async Task<RESTResult> AddOrUpdateItemAsync(UserDto currentUser, ItemDto item, bool isDeleted)
         {
-            RESTResult result = new RESTResult { 
-                Code=Common.RESTStatus.Success,
-                Message="Set Item Successfully"
-            }; 
+            RESTResult result = new RESTResult
+            {
+                Code = Common.RESTStatus.Failed,
+                Message = "Set Item Failed"
+            };
             if (isDeleted)
             {
-
+                if (item.Id.Equals(Guid.Empty))
+                {
+                    throw new ArgumentException("Please input correct item data");
+                }
+                var itemEntity = await _itemRepository.GetAsync(item.Id);
+                if (itemEntity != null)
+                {
+                    itemEntity.Name = item.Name;
+                    itemEntity.Price = item.Price;
+                    itemEntity.PromotionPrice = item.PromotionPrice;
+                    itemEntity.Status = item.Status;
+                    itemEntity.Unit = item.Unit;
+                    await _itemRepository.UpdateAsync(itemEntity);
+                    result.Code = RESTStatus.Success;
+                    result.Message = "Set Item successfully";
+                }
+            }
+            else
+            {
+                var itemEntity = Mapper.Map<ItemDto, Item>(item);
+                itemEntity.Id = Guid.NewGuid();
+                await _itemRepository.InsertAsync(itemEntity);
+                result.Code = RESTStatus.Success;
+                result.Message = "Set Item successfully";
             }
 
             return result;
         }
 
-        public Task<IList<ItemDto>> GetItemsByPageAsync(int pageIndex, int pageSize, UserDto currentUser)
+        public async Task<RESTResult> GetItemDetailedByIdAsync(UserDto currentUser, Guid itemId)
         {
+            RESTResult result = new RESTResult
+            {
+                Code = Common.RESTStatus.Success,
+                Message = "Get item detailed data successfully"
+            };
+
+            var itemEntity = await _itemRepository.GetAsync(itemId);
+            var itemDto = Mapper.Map<Item, ItemDto>(itemEntity);
+            //TODO: get pictures
+            var pictureEntity = await _pictureRepository.GetAllListAsync(item => item.ItemId.Equals(itemId));
+            pictureEntity.ForEach(pictureItem =>
+            {
+                itemDto.PictureLink.Add($"{_baseOptions.Value.Host}/{pictureItem.Id}");
+            });
+            result.Data = itemDto;
+
+            return result;
+        }
+
+        public async Task<Stream> GetItemPictureAsync(Guid itemId)
+        {
+            var pictureEntity = await _pictureRepository.GetAsync(itemId);
+            using (FileStream fs = new FileStream(pictureEntity.Path, FileMode.Open, FileAccess.Read))
+            using (MemoryStream momeryStream = new MemoryStream())
+            {
+                await fs.CopyToAsync(momeryStream);
+                return momeryStream;
+            }
+        }
+
+        public Task<RESTResult> GetItemsByPageAsync(UserDto currentUser, int pageIndex, int pageSize)
+        {
+            RESTResult result = new RESTResult
+            {
+                Code = Common.RESTStatus.Success
+            };
             IList<ItemDto> itemDtos = null;
             //TODO: get items from paging
-            var itemModels= _itemRepository.GetAll().Take((pageIndex - 1) * pageSize).Skip(pageSize).ToList();
-            if (itemModels.Count()>0)
+            var itemModels = _itemRepository.GetAll().Take((pageIndex - 1) * pageSize).Skip(pageSize).ToList();
+            if (itemModels.Count() > 0)
             {
                 itemDtos = new List<ItemDto>();
                 foreach (var item in itemModels)
@@ -48,7 +115,7 @@ namespace Abp.DoNetCore.Application
                 }
 
             }
-            return Task.FromResult(itemDtos);
+            return Task.FromResult(result);
         }
     }
 }

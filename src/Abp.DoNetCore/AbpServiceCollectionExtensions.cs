@@ -25,6 +25,7 @@ namespace Abp.DoNetCore
         {
             //TODO:Set jwt options
             var jwtAppSettingOptions = configuration.GetSection(nameof(JwtIssuerOptions));
+            var baseOption = configuration.GetSection(nameof(BaseOptions));
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -64,6 +65,10 @@ namespace Abp.DoNetCore
                 options.Subject = jwtAppSettingOptions[nameof(JwtIssuerOptions.Subject)];
                 options.ValidFor = TimeSpan.FromMinutes(Convert.ToDouble(jwtAppSettingOptions[nameof(JwtIssuerOptions.ValidFor)]));
                 options.SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
+            });
+
+            services.Configure<BaseOptions>(options => {
+                options.Host = baseOption[nameof(BaseOptions.Host)];
             });
             //Add the DotNet Core MVC filters
             services.AddScoped<ExceptionFilter>();
