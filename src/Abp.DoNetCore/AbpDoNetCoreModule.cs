@@ -19,6 +19,7 @@ namespace Abp.DoNetCore
             Register<IUserAppService, UserAppService>(builder, Dependency.DependencyLifeStyle.Transient);
             Register<IDigitalAssetService, DigitalAssetService>(builder, Dependency.DependencyLifeStyle.Transient);
             Register<IAuthorizationService, AuthorizationService>(builder, Dependency.DependencyLifeStyle.Transient);
+            Register<IItemService, ItemService>(builder, Dependency.DependencyLifeStyle.Transient);
         }
 
         public override void PostInitialize(ContainerBuilder builder)

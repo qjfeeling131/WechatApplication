@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\Abp.EntityFrameworkCore\Abp.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Abp.RedisCache\Abp.RedisCache.csproj" />
     <ProjectReference Include="..\..\src\Abp\Abp.csproj" />
+    <ProjectReference Include="..\..\src\WechatAPI\WechatAPI.csproj" />
   </ItemGroup>
 
 </Project>

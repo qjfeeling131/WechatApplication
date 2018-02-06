@@ -12,10 +12,11 @@ using AutoMapper;
 using System.IO;
 using Microsoft.Extensions.Options;
 using Abp.DoNetCore.Common;
+using Abp.Domain.Services;
 
 namespace Abp.DoNetCore.Application
 {
-    public class ItemService : IItemService
+    public class ItemService : DomainService, IItemService
     {
         public IRepository<Item> _itemRepository;
         public IRepository<Picture> _pictureRepository;
@@ -97,7 +98,7 @@ namespace Abp.DoNetCore.Application
             }
         }
 
-        public Task<RESTResult> GetItemsByPageAsync(UserDto currentUser, int pageIndex, int pageSize)
+        public async Task<RESTResult> GetItemsByPageAsync(UserDto currentUser, int pageIndex, int pageSize)
         {
             RESTResult result = new RESTResult
             {
@@ -105,7 +106,7 @@ namespace Abp.DoNetCore.Application
             };
             IList<ItemDto> itemDtos = null;
             //TODO: get items from paging
-            var itemModels = _itemRepository.GetAll().Take((pageIndex - 1) * pageSize).Skip(pageSize).ToList();
+            var itemModels = (await _itemRepository.GetAllListAsync()).Take(pageIndex * pageSize).Skip(pageSize * (pageIndex - 1));
             if (itemModels.Count() > 0)
             {
                 itemDtos = new List<ItemDto>();
@@ -115,7 +116,7 @@ namespace Abp.DoNetCore.Application
                 }
 
             }
-            return Task.FromResult(result);
+            return result;
         }
     }
 }

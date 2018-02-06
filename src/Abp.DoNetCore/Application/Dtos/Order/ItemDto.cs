@@ -1,9 +1,12 @@
-﻿using Abp.DoNetCore.Common;
+﻿using Abp.AutoMapper;
+using Abp.DoNetCore.Common;
+using Abp.DoNetCore.Domain;
 using System;
 using System.Collections.Generic;
 
 namespace Abp.DoNetCore.Application.Dtos.Order
 {
+    [AutoMap(typeof(Item))]
     public class ItemDto
     {
         public Guid Id { get; set; }
