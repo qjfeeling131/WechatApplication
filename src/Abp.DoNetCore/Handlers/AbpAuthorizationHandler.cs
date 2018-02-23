@@ -19,7 +19,7 @@ namespace Abp.DoNetCore.Handlers
             {
                 return;
             }
-            var accountClaim = context.User.FindFirst(c => c.Type == "MimeoUser" && c.Issuer == "SuperAwesomeTokenServer");
+            var accountClaim = context.User.FindFirst(c => c.Type == "WechatUser" && c.Issuer == "SuperAwesomeTokenServer");
             var currentUser = await _userService.GetUserInformationsAsync(accountClaim.Value);
             context.User.AddIdentity(new MimeoOAIdentity(currentUser));
             context.Succeed(requirement);

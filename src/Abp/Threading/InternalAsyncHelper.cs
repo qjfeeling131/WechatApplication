@@ -119,7 +119,7 @@ namespace Abp.Threading
             catch (Exception ex)
             {
                 exception = ex;
-                throw;
+                throw exception;
             }
             finally
             {

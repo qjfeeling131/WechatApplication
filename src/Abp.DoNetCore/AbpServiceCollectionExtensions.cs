@@ -82,7 +82,6 @@ namespace Abp.DoNetCore
         private static AbpBootstrapper AddAbpBootstrapper<TStartModule>(IServiceCollection services, IIocManager iocManager) where TStartModule : AbpModule
         {
             var abpBootstrapper = AbpBootstrapper.Create<TStartModule>(iocManager);
-            //services.AddSingleton(abpBootstrapper);
             abpBootstrapper.Initialize();
             return abpBootstrapper;
         }

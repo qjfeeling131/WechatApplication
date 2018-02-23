@@ -5,6 +5,7 @@ using Abp.DoNetCore.Application.Dtos.Order;
 using Abp.DoNetCore.Application.Dtos.Users;
 using Abp.DoNetCore.Application.Dtos;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace Abp.DoNetCore.Application.Abstracts
 {
@@ -17,7 +18,7 @@ namespace Abp.DoNetCore.Application.Abstracts
         /// <param name="pageIndex">Page index, default value as 0</param>
         /// <param name="pageSize">Page size. default value as 500</param>
         /// <param name="currentUser">Current user.</param>
-        Task<RESTResult> GetItemsByPageAsync(UserDto currentUser,int pageIndex = 0, int pageSize = 500);
+        Task<RESTResult> GetItemsByPageAsync(UserDto currentUser, int pageIndex = 0, int pageSize = 500);
 
         /// <summary>
         /// Get the details information for item
@@ -40,6 +41,21 @@ namespace Abp.DoNetCore.Application.Abstracts
         /// <param name="currentUser">Current user.</param>
         /// <param name="item">Item.</param>
         /// <param name="isDeleted">If set to <c>true</c> is deleted.</param>
-        Task<RESTResult> AddOrUpdateItemAsync(UserDto currentUser, ItemDto item, bool isDeleted);
+        Task<RESTResult> AddOrUpdateItemAsync(UserDto currentUser, ItemDto item, bool isNew);
+
+        /// <summary>
+        /// Remove the item async
+        /// </summary>
+        /// <param name="itemId"></param>
+        /// <returns></returns>
+        Task<RESTResult> RemoveItemAsync(Guid itemId);
+
+        /// <summary>
+        /// Upload the picture of item
+        /// </summary>
+        /// <param name="currentUser"></param>
+        /// <param name="formFile"></param>
+        /// <returns></returns>
+        Task<RESTResult> UploadItemPictureAsync(UserDto currentUser, IFormFile formFile, Guid itemId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Abp.DoNetCore;
+using Abp.DoNetCore.Handlers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using WechatAPI.Core.Filters;
 using WechatAPI.Core.Infrastructure;
 using WechatAPI.Core.Module;
 
@@ -29,6 +31,8 @@ namespace WechatAPI
         {
             // Add framework services.
             services.AddOptions();
+            //Add the authoriaztion 
+
             services.AddMvc(config =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -48,6 +52,7 @@ namespace WechatAPI
                 });
                 //MimeoOAWeb
                 //Set the comments path for the swagger json and ui.
+                c.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
                 var xmlPath = Path.Combine(basePath, "WechatAPI.xml");
                 c.IncludeXmlComments(xmlPath);
             });
