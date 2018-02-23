@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Abp.Domain.Repositories;
+using Abp.Domain.Services;
 using Abp.DoNetCore.Application.Abstracts;
-using Abp.Domain.Repositories;
-using Abp.DoNetCore.Domain;
 using Abp.DoNetCore.Application.Dtos;
 using Abp.DoNetCore.Application.Dtos.Order;
 using Abp.DoNetCore.Application.Dtos.Users;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using AutoMapper;
-using System.IO;
-using Microsoft.Extensions.Options;
 using Abp.DoNetCore.Common;
-using Abp.Domain.Services;
+using Abp.DoNetCore.Domain;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Abp.DoNetCore.Application
 {
@@ -28,14 +29,14 @@ namespace Abp.DoNetCore.Application
             _baseOptions = baseOptions;
         }
 
-        public async Task<RESTResult> AddOrUpdateItemAsync(UserDto currentUser, ItemDto item, bool isDeleted)
+        public async Task<RESTResult> AddOrUpdateItemAsync(UserDto currentUser, ItemDto item, bool isNew)
         {
             RESTResult result = new RESTResult
             {
                 Code = Common.RESTStatus.Failed,
                 Message = "Set Item Failed"
             };
-            if (isDeleted)
+            if (!isNew)
             {
                 if (item.Id.Equals(Guid.Empty))
                 {
@@ -66,6 +67,28 @@ namespace Abp.DoNetCore.Application
             return result;
         }
 
+        public async Task<RESTResult> RemoveItemAsync(Guid itemId)
+        {
+            RESTResult result = new RESTResult
+            {
+                Code = RESTStatus.Failed,
+                Message = "Remove ITem Filaed"
+            };
+
+            var itemEntity = await _itemRepository.GetAsync(itemId);
+            if (itemEntity == null)
+            {
+                result.Message = "Can not find the item, please input the correct id";
+                return result;
+            }
+            //TODO:Remove the item, set the IsDeleted as true;
+            itemEntity.IsDeleted = true;
+            await _itemRepository.UpdateAsync(itemEntity);
+            result.Code = RESTStatus.Success;
+            result.Message = "Successed";
+            return result;
+        }
+
         public async Task<RESTResult> GetItemDetailedByIdAsync(UserDto currentUser, Guid itemId)
         {
             RESTResult result = new RESTResult
@@ -84,6 +107,16 @@ namespace Abp.DoNetCore.Application
             });
             result.Data = itemDto;
 
+            return result;
+        }
+
+        public async Task<RESTResult> UploadItemPicture()
+        {
+            RESTResult result = new RESTResult
+            {
+                Code = RESTStatus.Success,
+                Message = "Upload Successful"
+            };
             return result;
         }
 
@@ -106,7 +139,7 @@ namespace Abp.DoNetCore.Application
             };
             IList<ItemDto> itemDtos = null;
             //TODO: get items from paging
-            var itemModels = (await _itemRepository.GetAllListAsync()).Take(pageIndex * pageSize).Skip(pageSize * (pageIndex - 1));
+            var itemModels = (await _itemRepository.GetAllListAsync(c => c.IsDeleted = false)).Take(pageIndex * pageSize).Skip(pageSize * (pageIndex - 1));
             if (itemModels.Count() > 0)
             {
                 itemDtos = new List<ItemDto>();
@@ -114,7 +147,48 @@ namespace Abp.DoNetCore.Application
                 {
                     itemDtos.Add(Mapper.Map<Item, ItemDto>(item));
                 }
+                result.Data = itemDtos;
 
+            }
+            return result;
+        }
+
+        public async Task<RESTResult> UploadItemPictureAsync(UserDto currentUser, IFormFile formFile, Guid itemId)
+        {
+            RESTResult result = new RESTResult { Code = RESTStatus.Success, Message = "Uplaod Successfully" };
+            //TODO:Get the item entity from DB
+            var itemEntity = _itemRepository.Get(itemId);
+            if (itemEntity == null)
+            {
+                throw new ArgumentException("The itemId doesn't exist, please try agian");
+            }
+            List<Task> uploadTasks = new List<Task>();
+            //TODO:Store the picture of item to physical memory
+            var folder = Path.Combine(Utilities.GetFilePathOfStoring(), $"{currentUser.Id.ToString()}/{ itemId.ToString()}");
+            Directory.CreateDirectory(folder);
+            var physicalPath = Path.Combine(folder, $"{formFile.FileName}");
+            if (File.Exists(physicalPath))
+            {
+                throw new InvalidOperationException("The file have been uplaod");
+            }
+            using (var stream = new FileStream(physicalPath, FileMode.CreateNew))
+            {
+                await formFile.CopyToAsync(stream);
+                uploadTasks.Add(formFile.CopyToAsync(stream));
+                uploadTasks.Add(_pictureRepository.InsertAndGetIdAsync(new Picture { ItemId = itemId, Name = formFile.FileName, ContentType = formFile.ContentType, Id = Guid.NewGuid(), Path = physicalPath }));
+                try
+                {
+
+                    await Task.WhenAll(uploadTasks);
+                }
+                catch (Exception exc)
+                {
+                    foreach (var taskFault in uploadTasks.Where(t => t.IsFaulted))
+                    {
+                        //retry one time.
+                        await taskFault;
+                    }
+                }
             }
             return result;
         }

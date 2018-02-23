@@ -17,6 +17,8 @@ namespace WechatAPI.Core.MimeoDBContext
         public DbSet<Recieve> ws_recieve { get; set; }
         public DbSet<Order> ws_order { get; set; }
         public DbSet<Receipt> ws_receipt { get; set; }
+        public DbSet<UserDepartment> ws_user_department { get; set; }
+        public DbSet<Picture> ws_picture { get; set; }
         public WechatContext(DbContextOptions<WechatContext> options):base(options)
         {
         }

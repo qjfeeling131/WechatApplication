@@ -17,10 +17,10 @@ namespace Abp.EntityFrameworkCore
         private readonly Dictionary<int, DbContext> _slaveCacheDbContext = new Dictionary<int, DbContext>();
         private readonly IAbpDbContextConfigurer<TDbContext> _dbContextConfigurer;
         private readonly EFCoreDataBaseOptions _dbOptions;
-        public DefaultDbContextResolver(IAbpDbContextConfigurer<TDbContext> dbContextConfigurer, EFCoreDataBaseOptions dbOptions)
+        public DefaultDbContextResolver(IAbpDbContextConfigurer<TDbContext> dbContextConfigurer, IOptions<EFCoreDataBaseOptions> dbOptions)
         {
             this._dbContextConfigurer = dbContextConfigurer;
-            this._dbOptions = dbOptions;
+            this._dbOptions = dbOptions.Value;
         }
         public DbContext Resolve(DBSelector dbSelector = DBSelector.Master)
         {

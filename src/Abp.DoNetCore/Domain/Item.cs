@@ -12,6 +12,7 @@ namespace Abp.DoNetCore.Domain
         public decimal Price { get; set; }
         public decimal PromotionPrice { get; set; }
         public ItemStatus Status { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
 
